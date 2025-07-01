@@ -14,18 +14,18 @@ if st.button("Summarize"):
     else:
         with st.spinner("Generating summary..."):
             start_time = time.time()
-            summary = research_topic(topic)
-            duration = round(time.time() - start_time, 2)
+            summary, usage, raw_duration = research_topic(topic)
+            duration = round(raw_duration, 2)
 
-        st.markdown("### 🧠 Summary")
+        st.markdown("## Summary")
         st.write(summary)
 
-        # ✅ Copy to clipboard
+        # Copy to clipboard
         st.code(summary, language="markdown")
 
-        # 📥 Download as Markdown
+        # Download as Markdown
         st.download_button(
-            label="📥 Download Summary",
+            label="Download Summary",
             data=summary,
             file_name="summary.md",
             mime="text/markdown"
