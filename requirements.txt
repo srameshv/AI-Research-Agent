@@ -1,0 +1,7 @@
+openai
+llama-index-core
+llama-index-llms-openai
+llama-index-embeddings-huggingface
+python-dotenv
+sentence-transformers
+
