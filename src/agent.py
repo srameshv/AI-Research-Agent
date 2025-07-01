@@ -9,7 +9,7 @@ from summarizer import summarize
 
 def research_topic(topic):
     docs = retrieve_documents(topic)
-    summary = summarize(docs)
+    summary = summarize(docs, topic)
     return summary
 
 if __name__ == "__main__":
