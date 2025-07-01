@@ -1,0 +1,2 @@
+Reinforcement Learning with Human Feedback (RLHF) is a method of aligning AI systems with human intent. It involves supervised fine-tuning of a model, followed by reward modeling based on human preferences, and final optimization using reinforcement learning techniques such as Proximal Policy Optimization (PPO).
+This approach has been used successfully in large language models like InstructGPT to improve safety and helpfulness of responses.
