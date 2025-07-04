@@ -3,16 +3,14 @@
 # -------------------------------
 import os
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
-
-from retriever import retrieve_documents
+from collections import defaultdict
 from summarizer import summarize
-from typing import List
-
-
+from typing import List, Tuple, Optional
 from Bio import Entrez
+import time
+
 Entrez.email = "oppaboo456@gmail.com"  # Required by NCBI
 
-from Bio import Entrez
 
 Entrez.email = "your_email@example.com"
 
@@ -78,10 +76,9 @@ def research_topic_basic(topic: str, sources: List[str]) -> str:
     summary, usage, duration = summarize(docs, topic)
     return summary
 
-from collections import defaultdict
 
-def research_topic(topic: str, sources: List[str]) -> str:
-    all_papers = []
+def research_topic(topic: str, sources: List[str]) -> Tuple[str, Optional[dict], float]:
+    all_papers: list[dict] = []
 
     for source in sources:
         if "pubmed" in source:
@@ -105,21 +102,32 @@ def research_topic(topic: str, sources: List[str]) -> str:
         formatted = f"**{title}** {meta}\n\n{summary}"
         docs_by_source[source].append(formatted)
 
-    # Summarize each group separately
     final_sections = []
+    total_usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
+    start_time = time.time()
+
     for source, docs in docs_by_source.items():
         print(f"[INFO] Summarizing papers from: {source} ({len(docs)} papers)")
         try:
-            summary, *_ = summarize(docs, topic)
+            summary, usage, _ = summarize(docs, topic)
+
+            # Aggregate token usage if available
+            if usage:
+                total_usage["prompt_tokens"] += usage.prompt_tokens
+                total_usage["completion_tokens"] += usage.completion_tokens
+                total_usage["total_tokens"] += usage.total_tokens
+
             section = f"### Summary from {source}\n\n{summary}"
             final_sections.append(section)
+
         except Exception as e:
             print(f"[ERROR] Failed to summarize source {source}: {e}")
             continue
 
+    duration = round(time.time() - start_time, 2)
     final_output = "\n\n---\n\n".join(final_sections)
-    return final_output
 
+    return final_output, total_usage, duration
 
 
 if __name__ == "__main__":
