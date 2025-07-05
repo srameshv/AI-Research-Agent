@@ -3,13 +3,10 @@ import time
 from agent import research_topic
 
 st.set_page_config(page_title="AI Research Agent", layout="centered")
-st.title("🔍 AI Research Agent")
+st.title("AI Research Agent")
 st.markdown("Ask a research question. I'll retrieve and summarize relevant info from your local document store.")
-
 topic = st.text_input("Enter a research topic")
-
 sources = st.multiselect("Select sources", ["arxiv.org", "pubmed"], default=["pubmed"])
-
 
 if st.button("Summarize"):
     if not topic:
@@ -34,22 +31,22 @@ if st.button("Summarize"):
             mime="text/markdown"
         )
 
-        # ⏱️ Response time
-        st.markdown(f"⏱️ Time taken: `{duration}` seconds")
-        # ⏱️ Time taken
-        st.markdown(f"⏱️ Time taken: `{duration}` seconds")
+        # Response time
+        st.markdown(f" Time taken: `{duration}` seconds")
+        # Time taken
+        st.markdown(f" Time taken: `{duration}` seconds")
 
-        # 📊 Actual token usage (if available)
+        # Actual token usage (if available)
         if usage:
             st.markdown(f"""
-                📊 Token usage:
+                Token usage:
                 - Prompt tokens: `{usage['prompt_tokens']}`
                 - Completion tokens: `{usage['completion_tokens']}`
                 - Total tokens: `{usage['total_tokens']}`
             """)
         else:
-            st.markdown("📊 Token usage: Not available.")
+            st.markdown("Token usage: Not available.")
 
-        # 📊 Rough token estimate
+        # Rough token estimate
         token_estimate = len(summary.split()) / 0.75  # avg 0.75 words/token
         st.markdown(f"Estimated tokens: `{int(token_estimate)}`")
