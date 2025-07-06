@@ -9,7 +9,6 @@ from Bio import Entrez
 import time
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
-os.environ["TOKENIZERS_PARALLELISM"] = "false"
 emaiIdForEntrez = os.environ["ENTREZ_EMAIL"]
 Entrez.email = emaiIdForEntrez  # Required by NCBI
 
@@ -99,6 +98,7 @@ def research_topic_basic(topic: str, sources: List[str]) -> str:
 def research_topic(topic: str, sources: List[str]) -> Tuple[list, str, Optional[dict], float]:
     all_papers: list[dict] = []
 
+    print(f"[cache] miss — fetching abstracts for: {topic}")
     for source in sources:
         if "pubmed" in source:
             '''
@@ -161,12 +161,6 @@ def research_topic(topic: str, sources: List[str]) -> Tuple[list, str, Optional[
             formatted = f"**{title}** {meta}\n\n{summary}"
             '''
             summary, usage, _ = summarize(formatted, topic)
-
-            # Aggregate token usage if available
-            if usage:
-                total_usage["prompt_tokens"] += usage.input_tokens
-                total_usage["completion_tokens"] += usage.output_tokens
-                total_usage["total_tokens"] += usage.output_tokens
 
             section = f"### Summary from {source}\n\n{summary}"
             final_sections.append(section)
