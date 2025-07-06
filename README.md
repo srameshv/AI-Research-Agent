@@ -42,3 +42,13 @@ Tracks query duration, output size, and prompt metadata to JSONL logs
 - Let the agent explain why it picked each paper
 - Use LangChain-style memory + context for follow-ups
 - Surface metadata: citations, impact factor, etc.
+
+## Tech Stack
+### Tech	Purpose
+- LangChain	LLM interface + caching
+- OpenAI SDK (v1.91+)	Summarization engine
+- DiskCache	Fast topic-level caching
+- Tenacity	Retry logic on transient LLM/API errors
+- Python 3.12	Core runtime
+- dotenv	Secret management
+- JSONL logs	Prompt usage audit trail
