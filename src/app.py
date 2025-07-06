@@ -4,7 +4,7 @@ from agent import research_topic
 
 st.set_page_config(page_title="AI Research Agent", layout="centered")
 st.title("AI Research Agent")
-st.markdown("Ask a research question. I'll retrieve and summarize relevant info from your local document store.")
+st.markdown("Ask a research question. I'll retrieve and summarize relevant info from online trusted sources.")
 topic = st.text_input("Enter a research topic")
 sources = st.multiselect("Select sources", ["arxiv.org", "pubmed"], default=["pubmed"])
 
@@ -14,11 +14,16 @@ if st.button("Summarize"):
     else:
         with st.spinner("Generating summary..."):
             start_time = time.time()
-            summary, usage, raw_duration = research_topic(topic, sources)
+            formatted, summary, usage, raw_duration = research_topic(topic, sources)
             duration = round(raw_duration, 2)
+
 
         st.markdown("## Summary")
         st.write(summary)
+
+        for block in formatted:
+            st.markdown(block)
+            st.markdown("---")
 
         # Copy to clipboard
         st.code(summary, language="markdown")
@@ -31,21 +36,14 @@ if st.button("Summarize"):
             mime="text/markdown"
         )
 
-        # Response time
-        st.markdown(f" Time taken: `{duration}` seconds")
         # Time taken
         st.markdown(f" Time taken: `{duration}` seconds")
 
         # Actual token usage (if available)
-        if usage:
-            st.markdown(f"""
-                Token usage:
-                - Prompt tokens: `{usage['prompt_tokens']}`
-                - Completion tokens: `{usage['completion_tokens']}`
-                - Total tokens: `{usage['total_tokens']}`
-            """)
-        else:
-            st.markdown("Token usage: Not available.")
+        # Prompt Tokens: These are the tokens that make up your input to the LLM. 
+        # Completion Tokens: These are the tokens that the LLM generates as its response to your prompt.
+        # Total Tokens: This is the sum of the prompt tokens and the completion tokens for a single API request.
+       
 
         # Rough token estimate
         token_estimate = len(summary.split()) / 0.75  # avg 0.75 words/token
