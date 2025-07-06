@@ -24,6 +24,18 @@ print(summary)
 
 - Summarization layer (plug in OpenAI/GPT, extractive models, etc.)
 
+- LLM-based summarization
+Summarizes each document using OpenAI's GPT models
+
+- LangChain-powered caching
+Prevents duplicate LLM calls by caching based on semantic prompt identity
+
+- Disk-level topic caching
+Lightweight, file-based caching of entire topic summaries
+
+- Logging & analytics
+Tracks query duration, output size, and prompt metadata to JSONL logs
+
 ## Roadmap
 - Add support for PapersWithCode and Semantic Scholar
 - Integrate sentence-transformer ranking
