@@ -1,12 +1,14 @@
 # -------------------------------
 # File: src/summarizer.py
 # -------------------------------
-from openai import OpenAI
-import os
+import json
+import os, time
+
+from datetime import datetime
 from dotenv import load_dotenv
 from tenacity import retry, retry_if_exception_type
-import time, json
-from datetime import datetime
+from cache import llm
+from langchain_openai import OpenAI
 
 load_dotenv()
 
@@ -26,6 +28,9 @@ def summarize(docs, topic):
     docs = f"**{title}** {meta}\n\n{summary}"
     '''
     joined = "\n".join(docs)
+    prompt = f"Summarize the following research excerpts:\n\n{joined}"
+
+    # Try to fetch from GPTCache
     start = time.time()
     '''
     role: system => Provides high-level instructions or context-setting messages to guide the model's behavior.
@@ -33,7 +38,7 @@ def summarize(docs, topic):
     In future if we want to move to the memory save for context , add this 
     thread_id=response.id
 
-    '''
+    
     response = client.responses.create(
         model="gpt-3.5-turbo",
         input=[
@@ -41,23 +46,28 @@ def summarize(docs, topic):
             {"role": "user", "content": joined}
         ]
     )
+    '''
+    summary = llm.predict(prompt)  # Auto-cached by LangChain
     end = time.time()
 
-    summary = response.output[0].content[0].text
-    usage = response.usage
+    # summary = response.output[0].content[0].text
+    # Save to GPTCache
+
+    usage = {
+        "input_tokens": "N/A",
+        "output_tokens": "N/A",
+        "total_tokens": "N/A"
+    }
     duration = round(end - start, 2)
 
     # Log to file
     log_entry = {
         "timestamp": datetime.utcnow().isoformat(),
         "topic": topic,
-        "prompt_tokens": usage.input_tokens,
-        "completion_tokens": usage.output_tokens,
-        "total_tokens": usage.output_tokens,
         "duration_seconds": duration,
         "summary_preview": summary[:200] + ("..." if len(summary) > 200 else "")
     }
-    # Create Log file directory if it doesnt exist.
+    # Create Log file directory if it doesn't exist.
     os.makedirs("logs", exist_ok=True)
     with open("logs/summary_log.jsonl", "a") as f:
         f.write(json.dumps(log_entry) + "\n")

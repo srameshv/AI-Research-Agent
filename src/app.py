@@ -17,10 +17,10 @@ if st.button("Summarize"):
             formatted, summary, usage, raw_duration = research_topic(topic, sources)
             duration = round(raw_duration, 2)
 
-
         st.markdown("## Summary")
         st.write(summary)
 
+        st.markdown("## Papers & Information")
         for block in formatted:
             st.markdown(block)
             st.markdown("---")
